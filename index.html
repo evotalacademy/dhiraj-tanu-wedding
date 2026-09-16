@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
+<title>Dhiraj &amp; Tanu — Wedding Invitation</title>
+<meta name="description" content="Dhiraj & Tanu invite you to celebrate their wedding — 2 December 2026." />
+<meta name="theme-color" content="#4A1420" />
+
+<!-- Open Graph so the WhatsApp link preview looks intentional -->
+<meta property="og:title" content="Dhiraj & Tanu — Wedding Invitation" />
+<meta property="og:description" content="2 December 2026 · Tejashvi Palace" />
+<meta property="og:type" content="website" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Marcellus&family=Karla:wght@400;500;600&family=Noto+Serif+Devanagari:wght@500;600;700&family=Noto+Sans+Devanagari:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ============================================================
+     SHARED SVG ARTWORK (defined once, reused with <use>)
+============================================================ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+
+  <!-- Corner floral flourish -->
+  <g id="art-corner-flourish">
+    <path d="M2 60 C2 30 10 8 40 4 C58 1 66 12 60 22 C54 32 40 26 40 14"
+          fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+    <circle cx="40" cy="14" r="3.2" fill="currentColor"/>
+    <path d="M14 46 C10 38 12 28 22 26 C30 24 34 32 28 36 C22 40 16 34 18 28"
+          fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>
+  </g>
+
+  <!-- Small blossom used across scenes -->
+  <g id="art-blossom">
+    <path d="M12 0 C15 5 15 9 12 12 C9 9 9 5 12 0 Z" fill="currentColor"/>
+    <path d="M12 0 C15 5 15 9 12 12 C9 9 9 5 12 0 Z" fill="currentColor" transform="rotate(72 12 12)"/>
+    <path d="M12 0 C15 5 15 9 12 12 C9 9 9 5 12 0 Z" fill="currentColor" transform="rotate(144 12 12)"/>
+    <path d="M12 0 C15 5 15 9 12 12 C9 9 9 5 12 0 Z" fill="currentColor" transform="rotate(216 12 12)"/>
+    <path d="M12 0 C15 5 15 9 12 12 C9 9 9 5 12 0 Z" fill="currentColor" transform="rotate(288 12 12)"/>
+    <circle cx="12" cy="12" r="2.3" fill="currentColor" opacity="0.6"/>
+  </g>
+
+  <!-- Paisley / mehndi motif -->
+  <path id="art-paisley" d="M20 2 C34 2 42 14 36 26 C32 34 20 36 16 28 C13 22 18 18 23 21
+                              C27 23 27 17 22 14 C14 10 4 16 6 28 C8 40 22 46 34 40"
+        fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+
+  <!-- Marigold bloom (haldi) -->
+  <g id="art-marigold">
+    <g fill="currentColor">
+      <ellipse cx="20" cy="6" rx="5" ry="8"/>
+      <ellipse cx="20" cy="6" rx="5" ry="8" transform="rotate(45 20 20)"/>
+      <ellipse cx="20" cy="6" rx="5" ry="8" transform="rotate(90 20 20)"/>
+      <ellipse cx="20" cy="6" rx="5" ry="8" transform="rotate(135 20 20)"/>
+      <ellipse cx="20" cy="6" rx="5" ry="8" transform="rotate(180 20 20)"/>
+      <ellipse cx="20" cy="6" rx="5" ry="8" transform="rotate(225 20 20)"/>
+      <ellipse cx="20" cy="6" rx="5" ry="8" transform="rotate(270 20 20)"/>
+      <ellipse cx="20" cy="6" rx="5" ry="8" transform="rotate(315 20 20)"/>
+    </g>
+    <circle cx="20" cy="20" r="5.5" fill="currentColor" opacity="0.55"/>
+  </g>
+
+  <!-- Gradients for the couple illustration — subtle fabric sheen and
+       volume rather than flat single-tone fills. -->
+  <linearGradient id="gLehenga" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#FBE9E7"/>
+    <stop offset="55%" stop-color="#F7DEDD"/>
+    <stop offset="100%" stop-color="#F0CDD0"/>
+  </linearGradient>
+  <linearGradient id="gPallu" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#EFC3D2"/>
+    <stop offset="100%" stop-color="#DDA3BC"/>
+  </linearGradient>
+  <radialGradient id="gHairBride" cx="35%" cy="25%" r="80%">
+    <stop offset="0%" stop-color="#4A211A"/>
+    <stop offset="100%" stop-color="#2E0F0C"/>
+  </radialGradient>
+  <linearGradient id="gSherwani" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#FBF3E2"/>
+    <stop offset="60%" stop-color="#F4E9D6"/>
+    <stop offset="100%" stop-color="#ECDBBE"/>
+  </linearGradient>
+  <linearGradient id="gSash" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#E9CD93"/>
+    <stop offset="100%" stop-color="#C89A50"/>
+  </linearGradient>
+  <radialGradient id="gTurban" cx="35%" cy="20%" r="85%">
+    <stop offset="0%" stop-color="#7C2836"/>
+    <stop offset="100%" stop-color="#54151F"/>
+  </radialGradient>
+  <radialGradient id="gSkin" cx="40%" cy="30%" r="75%">
+    <stop offset="0%" stop-color="#FCEEDF"/>
+    <stop offset="100%" stop-color="#F5DEC8"/>
+  </radialGradient>
+
+  <!-- Illustrated couple: bride (left) & groom (right) — premium wedding-invitation
+       artwork. Colours are set explicitly (not currentColor) so the couple reads the
+       same warm palette on every scene; jewellery/embroidery lines use the gold accent. -->
+  <g id="art-couple">
+    <ellipse cx="65" cy="164" rx="54" ry="6" fill="#6B1E2A" opacity="0.10"/>
+
+    <!-- Bride -->
+    <g transform="translate(0,2)">
+      <path d="M46 58 C58 66 62 100 56 140 C54 150 48 156 42 158 C46 132 44 96 38 70 C36 62 40 58 46 58 Z"
+            fill="url(#gPallu)" stroke="#6B1E2A" stroke-width="1"/>
+      <path d="M47 64 C55 82 55 112 49 138" fill="none" stroke="#B8863F" stroke-width="0.7" opacity="0.7"/>
+      <path d="M45 70 C51 88 51 110 47 130" fill="none" stroke="#fff" stroke-width="0.6" opacity="0.35"/>
+
+      <path d="M26 100 C14 108 10 138 14 158 C15 161 55 161 56 158 C60 138 56 108 44 100 Z"
+            fill="url(#gLehenga)" stroke="#6B1E2A" stroke-width="1.3"/>
+      <path d="M28 108 C24 124 24 144 28 156 M42 108 C46 124 46 144 42 156"
+            fill="none" stroke="#6B1E2A" stroke-width="0.6" opacity="0.28"/>
+      <path d="M35 106 C33 122 33 142 35 156" fill="none" stroke="#fff" stroke-width="0.8" opacity="0.4"/>
+      <path d="M15 152 C28 155 42 155 55 152" fill="none" stroke="#B8863F" stroke-width="1.6"/>
+      <path d="M16 158.5 C28 160.5 42 160.5 54 158.5" fill="none" stroke="#B8863F" stroke-width="0.8" opacity="0.7"/>
+      <g fill="#B8863F" opacity="0.85">
+        <circle cx="20" cy="150.5" r="0.7"/><circle cx="27" cy="152.3" r="0.7"/><circle cx="35" cy="153" r="0.7"/>
+        <circle cx="43" cy="152.3" r="0.7"/><circle cx="50" cy="150.5" r="0.7"/>
+      </g>
+
+      <path d="M27 64 C24 74 25 88 28 98 C31 101 39 101 42 98 C45 88 46 74 43 64 C39 59 31 59 27 64 Z"
+            fill="url(#gLehenga)" stroke="#6B1E2A" stroke-width="1.3"/>
+      <path d="M25 64 C20 65 17 71 18 77 C21 76 25 72 26 66 Z" fill="url(#gLehenga)" stroke="#6B1E2A" stroke-width="1.1"/>
+      <path d="M45 64 C50 65 53 71 52 77 C49 76 45 72 44 66 Z" fill="url(#gLehenga)" stroke="#6B1E2A" stroke-width="1.1"/>
+      <path d="M28 62 C22 72 22 88 27 98 C30 90 31 76 33 68 Z" fill="url(#gPallu)" stroke="#6B1E2A" stroke-width="0.9"/>
+      <path d="M28 66 C25 76 25 88 28 96" fill="none" stroke="#B8863F" stroke-width="0.6" opacity="0.6"/>
+      <path d="M28 98 C32 100.5 38 100.5 42 98" fill="none" stroke="#B8863F" stroke-width="1.6"/>
+      <circle cx="35" cy="99.3" r="1.4" fill="#B8863F"/>
+      <path d="M29 62 C32 66.5 38 66.5 41 62" fill="none" stroke="#B8863F" stroke-width="1.3"/>
+      <path d="M30.5 65 C33 69 37 69 39.5 65" fill="none" stroke="#B8863F" stroke-width="1"/>
+      <circle cx="35" cy="70.5" r="1.7" fill="#B8863F"/>
+      <circle cx="35" cy="70.5" r="0.7" fill="#F7DEDD"/>
+      <path d="M31.5 52 C31.5 56 31.5 58 32.5 60 M38.5 52 C38.5 56 38.5 58 37.5 60"
+            stroke="#6B1E2A" stroke-width="0.9" opacity="0.35" fill="none"/>
+      <circle cx="35" cy="42" r="13" fill="url(#gSkin)" stroke="#6B1E2A" stroke-width="1.3"/>
+      <path d="M22.2 40 C20.3 24.5 26.8 11 35 11 C43.2 11 49.7 24.5 47.8 40 C47.4 30 42.5 22 35 22 C27.5 22 22.6 30 22.2 40 Z"
+            fill="url(#gHairBride)"/>
+      <circle cx="35" cy="12.5" r="5.3" fill="url(#gHairBride)"/>
+      <path d="M27 16 C30 13.5 40 13.5 43 16" stroke="#6B382E" stroke-width="0.6" opacity="0.5" fill="none"/>
+      <circle cx="40.5" cy="9.5" r="2.4" fill="#B8863F"/>
+      <circle cx="40.5" cy="9.5" r="1" fill="#F1D6C3"/>
+      <path d="M35 22 L35 30" stroke="#B8863F" stroke-width="1"/>
+      <path d="M33 31.6 C33 30 37 30 37 31.6 C37 33.2 33 33.2 33 31.6 Z" fill="#B8863F"/>
+      <path d="M28.5 43 C29.7 44.6 32.3 44.6 33.3 43" stroke="#6B1E2A" stroke-width="0.9" fill="none" stroke-linecap="round"/>
+      <path d="M36.7 43 C37.7 44.6 40.3 44.6 41.5 43" stroke="#6B1E2A" stroke-width="0.9" fill="none" stroke-linecap="round"/>
+      <path d="M28.7 42 C29.6 41 32 40.8 33.4 41.6" stroke="#6B1E2A" stroke-width="0.55" fill="none" opacity="0.55" stroke-linecap="round"/>
+      <path d="M36.6 41.6 C38 40.8 40.4 41 41.3 42" stroke="#6B1E2A" stroke-width="0.55" fill="none" opacity="0.55" stroke-linecap="round"/>
+      <path d="M33.6 49.4 C35 50.6 35 50.6 36.4 49.4" stroke="#6B1E2A" stroke-width="0.85" fill="none" stroke-linecap="round"/>
+      <path d="M35 45.6 L34.3 48" stroke="#6B1E2A" stroke-width="0.6" opacity="0.5" fill="none" stroke-linecap="round"/>
+      <circle cx="25.5" cy="46" r="2.1" fill="#E7899F" opacity="0.4"/>
+      <circle cx="44.5" cy="46" r="2.1" fill="#E7899F" opacity="0.4"/>
+      <circle cx="35" cy="38.5" r="0.8" fill="#B8863F"/>
+      <path d="M21.6 43 C20.6 45.6 21 48 22.4 49.4" stroke="#B8863F" stroke-width="1" fill="none"/>
+      <path d="M48.4 43 C49.4 45.6 49 48 47.6 49.4" stroke="#B8863F" stroke-width="1" fill="none"/>
+      <circle cx="22.4" cy="49.6" r="0.9" fill="#B8863F"/>
+      <circle cx="47.6" cy="49.6" r="0.9" fill="#B8863F"/>
+      <circle cx="19" cy="79" r="1" fill="none" stroke="#B8863F" stroke-width="0.8"/>
+      <circle cx="51" cy="79" r="1" fill="none" stroke="#B8863F" stroke-width="0.8"/>
+    </g>
+
+    <!-- Groom -->
+    <g transform="translate(70,8)">
+      <path d="M19 60 C15 72 15 88 18 100 C13 116 12 132 15 148 C15 151 45 151 45 148 C48 132 47 116 42 100 C45 88 45 72 41 60 C37 55 23 55 19 60 Z"
+            fill="url(#gSherwani)" stroke="#6B1E2A" stroke-width="1.3"/>
+      <path d="M20 106 C25 108.4 35 108.4 40 106" fill="none" stroke="#6B1E2A" stroke-width="0.6" opacity="0.28"/>
+      <path d="M30 104 C28 118 28 136 30 148" fill="none" stroke="#fff" stroke-width="0.7" opacity="0.3"/>
+      <path d="M15.5 142 C22 145 38 145 44.5 142" fill="none" stroke="#B8863F" stroke-width="1.5"/>
+      <g fill="#B8863F" opacity="0.85">
+        <circle cx="19" cy="144.3" r="0.65"/><circle cx="25" cy="145.6" r="0.65"/><circle cx="30" cy="146" r="0.65"/>
+        <circle cx="35" cy="145.6" r="0.65"/><circle cx="41" cy="144.3" r="0.65"/>
+      </g>
+      <path d="M16.5 59 C29 68 38 90 35 118 C33.5 121 31.5 123.5 29.5 125 C29 121 29.5 116 30 111 C31 90 24 72 12.5 65 Z"
+            fill="url(#gSash)" stroke="#6B1E2A" stroke-width="1"/>
+      <path d="M17.5 63 C27 73 33 94 31 116" fill="none" stroke="#6B1E2A" stroke-width="0.5" opacity="0.35"/>
+      <path d="M20 104.5 C25 107 35 107 40 104.5" fill="none" stroke="#B8863F" stroke-width="1.3" opacity="0.9"/>
+      <path d="M30 58 L30 104" stroke="#B8863F" stroke-width="1"/>
+      <circle cx="30" cy="66" r="0.85" fill="#B8863F"/>
+      <circle cx="30" cy="74" r="0.85" fill="#B8863F"/>
+      <circle cx="30" cy="82" r="0.85" fill="#B8863F"/>
+      <circle cx="30" cy="90" r="0.85" fill="#B8863F"/>
+      <path d="M23 59 C26 55.5 34 55.5 37 59" fill="none" stroke="#6B1E2A" stroke-width="1.3"/>
+      <path d="M27 50 L27 57 M33 50 L33 57" stroke="#6B1E2A" stroke-width="0.9" opacity="0.35"/>
+      <circle cx="30" cy="38" r="12" fill="url(#gSkin)" stroke="#6B1E2A" stroke-width="1.3"/>
+      <path d="M17.5 35 C15.5 20.5 22 10 30 10 C38 10 44.5 20.5 42.5 35 C42 26 36.5 18.5 30 18.5 C23.5 18.5 18 26 17.5 35 Z"
+            fill="url(#gTurban)"/>
+      <path d="M19.5 27.5 C24.5 31.2 35.5 31.2 40.5 27.5" stroke="#D9A75C" stroke-width="0.8" fill="none" opacity="0.85"/>
+      <path d="M18.5 32 C24.5 35.6 35.5 35.6 41.5 32" stroke="#D9A75C" stroke-width="0.8" fill="none" opacity="0.85"/>
+      <circle cx="30" cy="14" r="1.9" fill="#B8863F"/>
+      <path d="M30 12.5 C27.7 6.3 29 -0.5 33 -5.5 C32.6 0.2 32.2 6.3 31.3 12" fill="#B8863F" opacity="0.9"/>
+      <path d="M23.6 39.4 C24.7 40.9 27 40.9 28 39.4" stroke="#6B1E2A" stroke-width="0.9" fill="none" stroke-linecap="round"/>
+      <path d="M32 39.4 C33 40.9 35.3 40.9 36.4 39.4" stroke="#6B1E2A" stroke-width="0.9" fill="none" stroke-linecap="round"/>
+      <path d="M23.8 38.4 C24.6 37.5 26.7 37.3 27.9 38" stroke="#6B1E2A" stroke-width="0.5" fill="none" opacity="0.5" stroke-linecap="round"/>
+      <path d="M32.1 38 C33.3 37.3 35.4 37.5 36.2 38.4" stroke="#6B1E2A" stroke-width="0.5" fill="none" opacity="0.5" stroke-linecap="round"/>
+      <path d="M30 41.6 L29.4 44" stroke="#6B1E2A" stroke-width="0.55" opacity="0.5" fill="none" stroke-linecap="round"/>
+      <path d="M28 46.6 C29.3 47.7 30.7 47.7 32 46.6" stroke="#6B1E2A" stroke-width="0.7" opacity="0.55" fill="none" stroke-linecap="round"/>
+      <path d="M25.3 45.1 C27 44.1 28.6 44.5 30 45 C31.4 44.5 33 44.1 34.7 45.1 M25.3 45.1 C24.6 44.5 24.3 43.7 24.5 43 M34.7 45.1 C35.4 44.5 35.7 43.7 35.5 43"
+            stroke="#3A1310" stroke-width="1.05" fill="none" stroke-linecap="round"/>
+    </g>
+  </g>
+
+  <!-- Mandap with the couple standing beneath the arch — one integrated
+       composition (no centre post, so the couple reads as part of the
+       scene rather than an icon placed on top of it). Reuses #art-couple
+       via <use> so the figures are only ever drawn once. -->
+  <g id="art-mandap-couple">
+    <g stroke="currentColor" fill="none">
+      <path d="M14 172 L14 42" stroke-width="2"/>
+      <path d="M106 172 L106 42" stroke-width="2"/>
+      <path d="M6 172 L22 172 M98 172 L114 172" stroke-width="2"/>
+      <path d="M8 42 C8 18 26 6 60 6 C94 6 112 18 112 42" stroke-width="2"/>
+      <path d="M14 42 L106 42" stroke-width="1.4"/>
+      <path d="M20 42 C20 32 26 26 34 26 C42 26 48 32 48 42" stroke-width="1"/>
+      <path d="M72 42 C72 32 78 26 86 26 C94 26 100 32 100 42" stroke-width="1"/>
+      <path d="M14 44 C10 52 10 58 14 64" stroke-width="1" opacity="0.8"/>
+      <path d="M106 44 C102 52 102 58 106 64" stroke-width="1" opacity="0.8"/>
+    </g>
+    <circle cx="14" cy="65" r="1.6" fill="currentColor"/>
+    <circle cx="106" cy="65" r="1.6" fill="currentColor"/>
+    <g fill="currentColor">
+      <circle cx="18" cy="40" r="2.6"/><circle cx="30" cy="26" r="2.6"/><circle cx="45" cy="16" r="2.6"/>
+      <circle cx="60" cy="12" r="2.8"/><circle cx="75" cy="16" r="2.6"/><circle cx="90" cy="26" r="2.6"/>
+      <circle cx="102" cy="40" r="2.6"/>
+    </g>
+    <use href="#art-blossom" transform="translate(48,-14) scale(1)"/>
+    <g transform="translate(13.2,48.6) scale(0.72)">
+      <use href="#art-couple"/>
+    </g>
+  </g>
+
+</defs>
+</svg>
+
+
+<!-- ============================================================
+     APP ROOT
+============================================================ -->
+<div id="app">
+
+  <!-- Decorative fixed backdrop shared across scenes -->
+  <div class="backdrop" aria-hidden="true">
+    <svg class="backdrop-corner backdrop-corner--tl" viewBox="0 0 66 66"><use href="#art-corner-flourish"/></svg>
+    <svg class="backdrop-corner backdrop-corner--br" viewBox="0 0 66 66"><use href="#art-corner-flourish"/></svg>
+  </div>
+
+  <!-- Back control -->
+  <button id="backBtn" class="back-btn" aria-label="Go back" hidden>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M15 5L8 12L15 19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="back-btn__label"></span>
+  </button>
+
+  <!-- ============ SCENE 1 — LANGUAGE ============ -->
+  <section class="scene scene--lang is-active" data-scene="lang">
+    <div class="scene__inner">
+      <p class="eyebrow-names">Dhiraj <span class="amp">&amp;</span> Tanu</p>
+      <div class="lang-choice">
+        <button class="lang-btn" data-lang="hi">हिंदी</button>
+        <span class="lang-divider">|</span>
+        <button class="lang-btn" data-lang="en">English</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SCENE 2 — OPENING ============ -->
+  <section class="scene scene--opening" data-scene="opening">
+    <div class="scene__inner">
+      <p class="blessing blessing--eyebrow" data-text="openingBlessing"></p>
+      <p class="family-line" id="familyLine" aria-hidden="false"></p>
+      <svg class="opening-art" viewBox="-5 -10 140 190" aria-hidden="true"><use href="#art-couple"/></svg>
+      <h1 class="names names--stacked">
+        <span class="name" data-text-name="groom"></span>
+        <span class="amp">&amp;</span>
+        <span class="name" data-text-name="bride"></span>
+      </h1>
+      <div class="divider-ornament" aria-hidden="true"><span class="divider-ornament__dot"></span></div>
+      <p class="tap-hint" data-text="tapToBegin"></p>
+    </div>
+  </section>
+
+  <!-- ============ SCENE 3 — MEHNDI & SANGEET ============ -->
+  <section class="scene scene--event scene--mehndi" data-scene="mehndi">
+    <div class="scatter" aria-hidden="true">
+      <svg class="scatter-icon scatter-icon--1" viewBox="0 0 42 46"><use href="#art-paisley"/></svg>
+      <svg class="scatter-icon scatter-icon--2" viewBox="0 0 42 46"><use href="#art-paisley"/></svg>
+    </div>
+    <div class="scene__inner">
+      <svg class="event-motif" viewBox="0 0 42 46" aria-hidden="true"><use href="#art-paisley"/></svg>
+      <h2 class="event-title" data-event="mehndi" data-field="title"></h2>
+      <div class="event-details">
+        <p class="event-date" data-event="mehndi" data-field="date"></p>
+        <p class="event-day"  data-event="mehndi" data-field="day"></p>
+        <p class="event-time" data-event="mehndi" data-field="time"></p>
+      </div>
+      <div class="event-venue">
+        <p class="venue-name" data-event="mehndi" data-field="venue"></p>
+        <p class="venue-address" data-event="mehndi" data-field="address"></p>
+      </div>
+      <p class="tap-hint" data-text="tapToContinue"></p>
+    </div>
+  </section>
+
+  <!-- ============ SCENE 4 — HALDI ============ -->
+  <section class="scene scene--event scene--haldi" data-scene="haldi">
+    <div class="scatter" aria-hidden="true">
+      <svg class="scatter-icon scatter-icon--1" viewBox="0 0 40 40"><use href="#art-marigold"/></svg>
+      <svg class="scatter-icon scatter-icon--2" viewBox="0 0 40 40"><use href="#art-marigold"/></svg>
+      <svg class="scatter-icon scatter-icon--3" viewBox="0 0 40 40"><use href="#art-marigold"/></svg>
+    </div>
+    <div class="scene__inner">
+      <svg class="event-motif event-motif--marigold" viewBox="0 0 40 40" aria-hidden="true"><use href="#art-marigold"/></svg>
+      <h2 class="event-title" data-event="haldi" data-field="title"></h2>
+      <div class="event-details">
+        <p class="event-date" data-event="haldi" data-field="date"></p>
+        <p class="event-day"  data-event="haldi" data-field="day"></p>
+        <p class="event-time" data-event="haldi" data-field="time"></p>
+      </div>
+      <div class="event-venue">
+        <p class="venue-name" data-event="haldi" data-field="venue"></p>
+        <p class="venue-address" data-event="haldi" data-field="address"></p>
+      </div>
+      <p class="tap-hint" data-text="tapToContinue"></p>
+    </div>
+  </section>
+
+  <!-- ============ SCENE 5 — WEDDING (SHUBH VIVAH, mandap integrated) ============ -->
+  <section class="scene scene--event scene--wedding" data-scene="wedding">
+    <div class="scatter" aria-hidden="true">
+      <svg class="scatter-icon scatter-icon--1" viewBox="0 0 24 24"><use href="#art-blossom"/></svg>
+      <svg class="scatter-icon scatter-icon--2" viewBox="0 0 24 24"><use href="#art-blossom"/></svg>
+    </div>
+    <div class="scene__inner">
+      <svg class="mandap-art mandap-art--couple" viewBox="-6 -20 132 200" aria-hidden="true"><use href="#art-mandap-couple"/></svg>
+      <h1 class="names names--inline">
+        <span class="name" data-text-name="groom"></span>
+        <span class="amp">&amp;</span>
+        <span class="name" data-text-name="bride"></span>
+      </h1>
+      <h2 class="event-title event-title--vivah" data-event="wedding" data-field="title"></h2>
+      <div class="event-details">
+        <p class="event-date" data-event="wedding" data-field="date"></p>
+        <p class="event-day"  data-event="wedding" data-field="day"></p>
+        <p class="event-time" data-event="wedding" data-field="time"></p>
+      </div>
+      <p class="venue-name venue-name--vivah" data-event="wedding" data-field="venue"></p>
+      <div class="divider-ornament" aria-hidden="true"><span class="divider-ornament__dot"></span></div>
+      <p class="tap-hint" data-text="tapToContinue"></p>
+    </div>
+  </section>
+
+  <!-- ============ SCENE 6 — VENUE / DETAILS (countdown folded in) ============ -->
+  <section class="scene scene--venue" data-scene="venue">
+    <div class="scene__inner">
+      <p class="eyebrow-names">
+        <span class="name-inline" data-text-name="groom"></span>
+        <span class="amp">&amp;</span>
+        <span class="name-inline" data-text-name="bride"></span>
+      </p>
+      <h2 class="event-title" data-text="venueDetailsTitle"></h2>
+      <div class="event-details">
+        <p class="event-date" data-event="wedding" data-field="date"></p>
+        <p class="event-time" data-event="wedding" data-field="time"></p>
+      </div>
+      <div class="event-venue">
+        <p class="venue-name" data-event="wedding" data-field="venue"></p>
+        <p class="venue-address" data-event="wedding" data-field="address"></p>
+      </div>
+
+      <div class="countdown-compact" id="countdownGrid">
+        <p class="countdown-compact__label" data-text="countdownLabel"></p>
+        <div class="countdown-compact__row">
+          <div class="countdown-compact__cell"><span class="countdown-num" id="cd-days">00</span><span class="countdown-unit" data-text="days"></span></div>
+          <span class="countdown-compact__dot">&middot;</span>
+          <div class="countdown-compact__cell"><span class="countdown-num" id="cd-hours">00</span><span class="countdown-unit" data-text="hours"></span></div>
+          <span class="countdown-compact__dot">&middot;</span>
+          <div class="countdown-compact__cell"><span class="countdown-num" id="cd-minutes">00</span><span class="countdown-unit" data-text="minutes"></span></div>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button class="pill-btn pill-btn--primary" id="mapsBtn" data-text="openMaps"></button>
+        <button class="pill-btn" id="calendarBtn" data-text="addCalendar"></button>
+      </div>
+      <p class="tap-hint" data-text="tapToContinue"></p>
+    </div>
+  </section>
+
+  <!-- ============ SCENE 7 — FINAL ============ -->
+  <section class="scene scene--final" data-scene="final">
+    <div class="scene__inner">
+      <svg class="opening-art opening-art--small" viewBox="-5 -10 140 190" aria-hidden="true"><use href="#art-couple"/></svg>
+      <p class="blessing" data-text="finalMessage"></p>
+      <h1 class="names names--stacked">
+        <span class="name" data-text-name="groom"></span>
+        <span class="amp">&amp;</span>
+        <span class="name" data-text-name="bride"></span>
+      </h1>
+      <p class="rsvp-line" data-text="finalRSVP"></p>
+      <div class="divider-ornament" aria-hidden="true"><span class="divider-ornament__dot"></span></div>
+      <div class="action-row">
+        <button class="pill-btn pill-btn--primary" id="mapsBtnFinal" data-text="openMaps"></button>
+        <button class="pill-btn" id="calendarBtnFinal" data-text="addCalendar"></button>
+      </div>
+      <button class="text-btn" id="replayBtn" data-text="replay"></button>
+    </div>
+  </section>
+
+</div>
+
+<script src="config.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
