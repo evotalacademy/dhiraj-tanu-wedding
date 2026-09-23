@@ -1,0 +1,1333 @@
+/* ============================================================
+   DESIGN TOKENS
+   ------------------------------------------------------------
+   Change the wedding's colour identity here. Everything else
+   in this file references these variables.
+============================================================ */
+:root{
+  --maroon:        #6B1E2A;
+  --maroon-dark:   #3E1119;
+  --ivory:         #FBF3E7;
+  --ivory-deep:    #F3E6D3;
+  --gold:          #B8863F;
+  --gold-soft:     #DDBB80;
+  --gold-glow:     #E9CB8E;
+  --peach:         #F1D6C3;
+  --blush:         #F0D3D8;
+  --ink:           #2E160F;
+  --ink-soft:      #6B4A3A;
+
+  --haldi:         #D99B2B;
+  --haldi-soft:    #F6DFA0;
+  --mehndi-green:  #4C6B4E;
+
+  --font-display: 'Cormorant Garamond', 'Noto Serif Devanagari', serif;
+  --font-heading: 'Marcellus', 'Noto Serif Devanagari', serif;
+  --font-body:    'Karla', 'Noto Sans Devanagari', sans-serif;
+
+  --dur-scene: 0.85s;
+  --ease-invite: cubic-bezier(.22,.61,.36,1);
+}
+
+html[data-lang="hi"]{
+  --font-display: 'Noto Serif Devanagari', serif;
+  --font-heading: 'Noto Serif Devanagari', serif;
+  --font-body:    'Noto Sans Devanagari', sans-serif;
+}
+
+*{ box-sizing: border-box; }
+html, body{
+  margin:0; padding:0;
+  height:100%;
+  max-width: 100vw;
+  background: var(--ivory);
+  color: var(--ink);
+  overflow: hidden;               /* each scene is full-screen, no page scroll */
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+  overscroll-behavior-x: none;
+  touch-action: pan-y;
+}
+body{
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+}
+html[data-lang="hi"] body{ font-size: 16.5px; line-height: 1.7; }
+
+button{
+  font-family: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ============================================================
+   APP SHELL
+============================================================ */
+#app{
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  height: 100svh;
+  overflow: hidden;
+  overflow-x: hidden;
+  max-width: 100vw;
+  touch-action: pan-y;
+  perspective: 1400px;
+}
+
+.backdrop{
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 6;
+}
+.backdrop-corner{
+  position: absolute;
+  width: 12vw;
+  max-width: 52px;
+  height: auto;
+  color: var(--gold);
+  opacity: 0.4;
+}
+.backdrop-corner--tl{
+  top: calc(env(safe-area-inset-top, 0px) + 14px);
+  left: 14px;
+}
+.backdrop-corner--br{
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 14px);
+  right: 14px;
+  transform: rotate(180deg);
+}
+/* The backdrop corners echo the sealed card's own flourishes — hide the
+   fixed pair while the language & seal scenes are showing their own. */
+.scene--lang.is-active ~ .backdrop,
+.scene--seal.is-active ~ .backdrop{ opacity: 0; }
+
+/* ============================================================
+   SCENES
+   Each scene is a full-viewport panel. Only .is-active is
+   interactive/visible; others are inert for accessibility.
+============================================================ */
+.scene{
+  position: absolute;
+  inset: 0;
+  max-width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding:
+    calc(env(safe-area-inset-top, 0px) + 30px)
+    26px
+    calc(env(safe-area-inset-bottom, 0px) + 30px);
+  text-align: center;
+  background: var(--ivory);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(0) scale(1);
+  filter: blur(0px);
+  transition: none;
+  z-index: 1;
+  overflow: hidden;
+  overflow-x: hidden;
+}
+.scene.is-active{
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+  filter: blur(0px);
+  z-index: 4;
+}
+
+/* Cinematic scene crossfade — applied momentarily by script.js around
+   a scene change, then cleared. Deliberately minimal and IDENTICAL
+   for every one of the eight named transitions: the destination scene
+   never visibly slides, drags or lifts — it only softens into view
+   (opacity + a hairline scale/blur, nothing a guest would read as
+   "movement"). Every transition's actual visual character lives
+   entirely in the #transitionFX overlay below, never on the scene. */
+.scene.enter-below,
+.scene.enter-above{
+  visibility: visible;
+  opacity: 0;
+  transform: scale(0.985);
+  filter: blur(6px);
+  z-index: 5;
+}
+.scene.exit-up,
+.scene.exit-down{
+  opacity: 0;
+  transform: scale(0.992);
+  filter: blur(3px);
+  z-index: 3;
+}
+.scene.is-transitioning{
+  will-change: transform, opacity, filter;
+  transition:
+    transform var(--tr-duration, 900ms) var(--ease-invite),
+    opacity var(--tr-duration, 900ms) var(--ease-invite),
+    filter var(--tr-duration, 900ms) var(--ease-invite);
+}
+
+/* The inner content settles a beat after the scene shell itself —
+   pure opacity, no position offset, so nothing here ever reads as the
+   page being dragged; it's the same quiet lag on every transition. */
+@media (prefers-reduced-motion: no-preference){
+  .scene.enter-below .scene__inner,
+  .scene.enter-above .scene__inner{ opacity: 0.85; }
+  .scene.is-active .scene__inner{ opacity: 1; }
+  .scene.is-transitioning .scene__inner{
+    will-change: opacity;
+    transition: opacity var(--tr-duration, 900ms) var(--ease-invite) 45ms;
+  }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .scene{ transition: opacity 0.2s linear !important; }
+  .scene.is-active{ transform: none !important; filter: none !important; }
+}
+
+/* ============================================================
+   TRANSITION CHOREOGRAPHY OVERLAY (#transitionFX)
+   ------------------------------------------------------------
+   One fixed, full-screen layer above the scenes. Every sub-layer is
+   inert (opacity:0, pointer-events:none, no animation-name) until
+   script.js puts a fx-mode-{name} class on the container — only then
+   do that transition's own sub-layers get an animation-name at all,
+   via the descendant rules below. Nothing here ever uses translateX;
+   the handful of elements that move at all move only on the Y axis,
+   or scale/rotate in place. This is where each of the eight named
+   transitions gets its distinct character; the scenes themselves
+   (above) never do more than a plain crossfade.
+============================================================ */
+.transition-fx{
+  position: fixed;
+  inset: 0;
+  z-index: 7;
+  pointer-events: none;
+  overflow: hidden;
+}
+.transition-fx > *{ position: absolute; opacity: 0; }
+
+/* ---------- 1. Curtain (Language -> Sealed Invitation) ----------
+   Two ivory/gold bands retract into themselves (scaleY toward their
+   own outer edge — never a translate) like a pair of soft curtains
+   drawing open, meeting for a moment at a glowing gold seam. */
+.fx-curtain{
+  left: 0; width: 100%; height: 52%;
+  background: linear-gradient(180deg, rgba(251,243,231,0.97) 0%, rgba(243,230,211,0.94) 100%);
+}
+.fx-curtain--top{ top: 0; transform-origin: top center; }
+.fx-curtain--bottom{ bottom: 0; transform-origin: bottom center; background: linear-gradient(0deg, rgba(251,243,231,0.97) 0%, rgba(243,230,211,0.94) 100%); }
+.fx-mode-curtain .fx-curtain,
+.fx-mode-curtain .fx-seam{ opacity: 1; }
+.fx-mode-curtain.is-active .fx-curtain--top{ animation: fx-curtain-top var(--tr-duration, 950ms) var(--ease-invite) forwards; }
+.fx-mode-curtain.is-active .fx-curtain--bottom{ animation: fx-curtain-bottom var(--tr-duration, 950ms) var(--ease-invite) forwards; }
+.fx-mode-curtain.is-active .fx-seam{ animation: fx-seam-glow calc(var(--tr-duration, 950ms) * 0.7) ease-out forwards; }
+@keyframes fx-curtain-top{
+  0%{ transform: scaleY(1); opacity: 1; }
+  55%{ transform: scaleY(1); opacity: 1; }
+  100%{ transform: scaleY(0); opacity: 1; }
+}
+@keyframes fx-curtain-bottom{
+  0%{ transform: scaleY(1); opacity: 1; }
+  55%{ transform: scaleY(1); opacity: 1; }
+  100%{ transform: scaleY(0); opacity: 1; }
+}
+
+/* ---------- shared: seam + bloom (Curtain, Card Reveal, Royal Dissolve) ---------- */
+.fx-seam{
+  left: 50%; top: 18%; width: 2px; height: 64%;
+  transform: translateX(-50%) scaleY(0);
+  transform-origin: center;
+  background: linear-gradient(180deg, transparent 0%, var(--gold-glow) 50%, transparent 100%);
+  box-shadow: 0 0 18px 2px var(--gold-glow);
+}
+@keyframes fx-seam-glow{
+  0%{ opacity: 0; transform: translateX(-50%) scaleY(0); }
+  40%{ opacity: 1; transform: translateX(-50%) scaleY(1); }
+  100%{ opacity: 0; transform: translateX(-50%) scaleY(1); }
+}
+.fx-bloom{
+  left: 50%; top: 42%; width: 60vh; height: 60vh;
+  transform: translate(-50%, -50%) scale(0.3);
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--tone-color, rgba(233,203,142,0.5)) 0%, transparent 70%);
+  mix-blend-mode: screen;
+}
+.fx-mode-cardReveal .fx-bloom,
+.fx-mode-royalDissolve .fx-bloom,
+.fx-mode-haldiGolden .fx-bloom,
+.fx-mode-finalReveal .fx-bloom{ opacity: 1; }
+.fx-mode-cardReveal.is-active .fx-seam{ animation: fx-seam-glow calc(var(--tr-duration, 1000ms) * 0.75) ease-out forwards; }
+.fx-mode-cardReveal .fx-seam{ opacity: 1; }
+.fx-mode-cardReveal.is-active .fx-bloom,
+.fx-mode-royalDissolve.is-active .fx-bloom,
+.fx-mode-haldiGolden.is-active .fx-bloom,
+.fx-mode-finalReveal.is-active .fx-bloom{
+  animation: fx-bloom-pulse var(--tr-duration, 900ms) ease-out forwards;
+}
+@keyframes fx-bloom-pulse{
+  0%{ opacity: 0; transform: translate(-50%, -50%) scale(0.3); }
+  40%{ opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100%{ opacity: 0; transform: translate(-50%, -50%) scale(1.55); }
+}
+
+/* ---------- 4. Floral Reveal (Manas Path -> Mehndi & Sangeet) ----------
+   Small botanical silhouettes grow in from each corner, hold briefly,
+   then withdraw — never falling, never crossing the centre. */
+.fx-corner{ width: 30vw; max-width: 130px; height: 30vw; max-height: 130px; }
+.fx-corner--tl{ top: -6%; left: -6%; }
+.fx-corner--tr{ top: -6%; right: -6%; }
+.fx-corner--bl{ bottom: -6%; left: -6%; }
+.fx-corner--br{ bottom: -6%; right: -6%; }
+.fx-corner i{
+  display: block; width: 100%; height: 100%;
+  background: radial-gradient(circle at 30% 30%, var(--mehndi-green) 0%, transparent 70%);
+  border-radius: 0 0 100% 0;
+  transform: scale(0.2);
+  opacity: 0;
+}
+.fx-corner--tr i{ border-radius: 0 0 0 100%; background-position: 70% 30%; }
+.fx-corner--bl i{ border-radius: 0 100% 0 0; }
+.fx-corner--br i{ border-radius: 100% 0 0 0; }
+.fx-mode-floralReveal .fx-corner{ opacity: 1; }
+.fx-mode-floralReveal.is-active .fx-corner i{
+  animation: fx-corner-bloom var(--tr-duration, 850ms) var(--ease-invite) forwards;
+}
+.fx-mode-floralReveal.is-active .fx-corner--tr i,
+.fx-mode-floralReveal.is-active .fx-corner--br i{ animation-delay: 0.06s; }
+@keyframes fx-corner-bloom{
+  0%{ opacity: 0; transform: scale(0.2); }
+  38%{ opacity: 0.9; transform: scale(1); }
+  100%{ opacity: 0; transform: scale(1.08); }
+}
+
+/* ---------- 5. Soft Floral Swirl (Mehndi -> Haldi) ----------
+   Small translucent petals arranged around the centre, each carried
+   by its own slowly-rotating wrapper while the petal shape itself
+   counter-rotates to stay upright — reads as a soft circular bloom,
+   never as the page (or the whole cluster) spinning. */
+.fx-swirl{
+  left: 50%; top: 46%; width: 1px; height: 1px;
+  transform: translate(-50%, -50%);
+}
+.fx-mode-softSwirl .fx-swirl{ opacity: 1; }
+.fx-swirl__leaf{
+  position: absolute;
+  left: 0; top: 0;
+  width: 15vw; max-width: 64px; height: 15vw; max-height: 64px;
+  margin: calc(-7.5vw) 0 0 calc(-7.5vw);
+  transform: rotate(var(--a)) translateY(-13vh) rotate(calc(var(--a) * -1)) scale(0.4);
+  opacity: 0;
+}
+.fx-swirl__leaf::before{
+  content: "";
+  display: block; width: 100%; height: 100%;
+  background: radial-gradient(circle at 35% 35%, var(--blush) 0%, transparent 72%);
+  border-radius: 0 100% 0 100%;
+}
+.fx-mode-softSwirl.is-active .fx-swirl__leaf{
+  animation: fx-swirl-in var(--tr-duration, 900ms) var(--ease-invite) forwards;
+}
+@keyframes fx-swirl-in{
+  0%{ opacity: 0; transform: rotate(var(--a)) translateY(-13vh) rotate(calc(var(--a) * -1)) scale(0.3); }
+  15%{ transform: rotate(calc(var(--a) - 8deg)) translateY(-13vh) rotate(calc((var(--a) - 8deg) * -1)) scale(0.3); }
+  45%{ opacity: 0.85; transform: rotate(calc(var(--a) + 10deg)) translateY(-13vh) rotate(calc((var(--a) + 10deg) * -1)) scale(1); }
+  100%{ opacity: 0; transform: rotate(calc(var(--a) + 14deg)) translateY(-13vh) rotate(calc((var(--a) + 14deg) * -1)) scale(1.05); }
+}
+
+/* ---------- shared: golden powder bloom (Haldi -> Shubh Vivah) ----------
+   Irregular, heavily-blurred blobs of varying size drifting outward
+   from lower-centre — organic rather than uniform dots/confetti. */
+.fx-powder{ inset: 0; }
+.fx-mode-haldiGolden .fx-powder{ opacity: 1; }
+.fx-powder__blob{
+  border-radius: 46% 54% 58% 42% / 52% 44% 56% 48%;
+  background: radial-gradient(circle at 38% 34%, rgba(246,223,160,0.95) 0%, rgba(217,155,43,0.55) 65%, transparent 100%);
+  filter: blur(5px);
+  transform: scale(0.2);
+}
+.fx-powder__blob--1{ left: 46%; bottom: 8%;  width: 30vw; height: 30vw; }
+.fx-powder__blob--2{ left: 30%; bottom: 14%; width: 22vw; height: 22vw; }
+.fx-powder__blob--3{ left: 60%; bottom: 16%; width: 24vw; height: 24vw; }
+.fx-powder__blob--4{ left: 40%; bottom: 30%; width: 18vw; height: 18vw; filter: blur(7px); }
+.fx-powder__blob--5{ left: 58%; bottom: 34%; width: 16vw; height: 16vw; filter: blur(7px); }
+.fx-powder__blob--6{ left: 48%; bottom: 4%;  width: 34vw; height: 34vw; filter: blur(8px); }
+.fx-mode-haldiGolden.is-active .fx-powder__blob{
+  animation: fx-powder-bloom var(--tr-duration, 1000ms) var(--ease-invite) forwards;
+}
+.fx-mode-haldiGolden.is-active .fx-powder__blob--2{ animation-delay: 0.05s; }
+.fx-mode-haldiGolden.is-active .fx-powder__blob--3{ animation-delay: 0.09s; }
+.fx-mode-haldiGolden.is-active .fx-powder__blob--4{ animation-delay: 0.14s; }
+.fx-mode-haldiGolden.is-active .fx-powder__blob--5{ animation-delay: 0.18s; }
+.fx-mode-haldiGolden.is-active .fx-powder__blob--6{ animation-delay: 0.02s; }
+@keyframes fx-powder-bloom{
+  0%{ opacity: 0; transform: scale(0.2) translateY(4%); }
+  40%{ opacity: 0.85; transform: scale(1) translateY(-2%); }
+  100%{ opacity: 0; transform: scale(1.35) translateY(-8%); }
+}
+
+/* ---------- 7. Royal Wedding Reveal (Shubh Vivah -> Little Stars) ----------
+   Two small garland strands settle in from the top corners (vertical
+   motion only), with two soft rose blooms fading in near centre —
+   deep maroon/gold, never a full side panel. */
+.fx-garland{ top: -8%; width: 8px; height: 30vh; max-height: 220px; }
+.fx-garland--left{ left: 10%; }
+.fx-garland--right{ right: 10%; }
+.fx-garland i{
+  display: block; width: 100%; height: 100%; border-radius: 4px;
+  background: repeating-linear-gradient(180deg, var(--gold-soft) 0px, var(--gold-soft) 5px, var(--maroon) 5px, var(--maroon) 10px);
+  transform: translateY(-100%);
+}
+.fx-mode-royalReveal .fx-garland,
+.fx-mode-royalReveal .fx-rose{ opacity: 1; }
+.fx-mode-royalReveal.is-active .fx-garland i{
+  animation: fx-garland-drop var(--tr-duration, 1100ms) var(--ease-invite) forwards;
+}
+.fx-mode-royalReveal.is-active .fx-garland--right i{ animation-delay: 0.08s; }
+@keyframes fx-garland-drop{
+  0%{ opacity: 0; transform: translateY(-100%); }
+  35%{ opacity: 1; transform: translateY(0%); }
+  75%{ opacity: 1; transform: translateY(0%); }
+  100%{ opacity: 0; transform: translateY(6%); }
+}
+.fx-rose{
+  top: 40%; width: 14vw; max-width: 60px; height: 14vw; max-height: 60px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #E7A3B4 0%, #C2445B 62%, #7C2836 100%);
+  box-shadow: 0 0 0 3px rgba(255,250,240,0.4);
+  transform: scale(0.3);
+}
+.fx-rose--1{ left: 24%; }
+.fx-rose--2{ right: 24%; top: 46%; }
+.fx-mode-royalReveal.is-active .fx-rose{
+  animation: fx-rose-bloom var(--tr-duration, 1100ms) var(--ease-invite) forwards;
+}
+.fx-mode-royalReveal.is-active .fx-rose--2{ animation-delay: 0.1s; }
+@keyframes fx-rose-bloom{
+  0%{ opacity: 0; transform: scale(0.3); }
+  45%{ opacity: 0.95; transform: scale(1); }
+  100%{ opacity: 0; transform: scale(1.12); }
+}
+
+/* ---------- 8. Final Invitation Reveal (Little Stars -> Final page) ----------
+   A soft ivory/gold border frame draws in from all four edges at once
+   (inset, not translated) with a gentle glow, like the last page of a
+   printed card settling into its border. */
+.fx-frame{
+  inset: 6%;
+  border-radius: 18px;
+  border: 1.5px solid var(--gold-glow);
+  box-shadow: 0 0 0 1px rgba(233,203,142,0.25), 0 0 30px 4px rgba(233,203,142,0.28);
+  transform: scale(1.05);
+}
+.fx-mode-finalReveal .fx-frame{ opacity: 1; }
+.fx-mode-finalReveal.is-active .fx-frame{
+  animation: fx-frame-settle var(--tr-duration, 950ms) var(--ease-invite) forwards;
+}
+@keyframes fx-frame-settle{
+  0%{ opacity: 0; transform: scale(1.08); }
+  38%{ opacity: 1; transform: scale(1); }
+  100%{ opacity: 0; transform: scale(0.99); }
+}
+
+
+.scene__inner{
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 420px;
+  max-height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  overscroll-behavior-x: none;
+  overflow-x: hidden;
+  max-width: 100%;
+  scrollbar-width: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 4px 0;
+}
+.scene__inner::-webkit-scrollbar{ display: none; }
+
+.scene--couple .scene__inner,
+.scene--wedding .scene__inner{ gap: 12px; }
+.scene--final .scene__inner{ gap: 12px; }
+.scene--final .action-row{ margin-top: 4px; }
+
+/* Small line–dot–line flourish marking the close of the ceremonial
+   copy, just above the tap prompt / action buttons. */
+.divider-ornament{
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 108px;
+  margin: 2px 0;
+  color: var(--gold);
+}
+.divider-ornament::before,
+.divider-ornament::after{
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--gold-soft);
+}
+.divider-ornament__dot{
+  width: 5px; height: 5px;
+  flex: none;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* Per-scene warm tints, layered subtly over the shared ivory base.
+   Each scene also gets a soft radial "glow" wash so it feels lit
+   rather than flat-coloured. */
+.scene--couple{
+  background:
+    radial-gradient(120% 70% at 50% 10%, rgba(241,214,195,0.9) 0%, transparent 60%),
+    var(--ivory);
+}
+.scene--manas{
+  background:
+    radial-gradient(110% 65% at 50% 6%, rgba(107,30,42,0.08) 0%, transparent 55%),
+    var(--ivory);
+}
+.scene--mehndi{
+  background:
+    radial-gradient(110% 65% at 18% 8%, rgba(76,107,78,0.14) 0%, transparent 55%),
+    radial-gradient(110% 70% at 85% 92%, rgba(107,30,42,0.10) 0%, transparent 55%),
+    var(--ivory);
+}
+.scene--haldi{
+  background:
+    radial-gradient(120% 70% at 50% 6%, var(--haldi-soft) 0%, transparent 60%),
+    radial-gradient(90% 60% at 90% 95%, rgba(217,155,43,0.18) 0%, transparent 60%),
+    var(--ivory);
+}
+.scene--wedding{
+  background:
+    radial-gradient(130% 85% at 50% 4%, var(--gold-soft) 0%, transparent 62%),
+    radial-gradient(90% 60% at 12% 90%, rgba(107,30,42,0.12) 0%, transparent 55%),
+    var(--ivory);
+}
+.scene--stars{
+  background:
+    radial-gradient(120% 70% at 50% 8%, var(--blush) 0%, transparent 60%),
+    var(--ivory);
+}
+.scene--final{
+  background:
+    radial-gradient(120% 75% at 50% 88%, var(--peach) 0%, transparent 62%),
+    var(--ivory);
+}
+
+/* Gentle glowing particles — wedding scene only, pure CSS, no assets */
+.scene--wedding::before,
+.scene--wedding::after{
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(circle, var(--gold-glow) 0%, transparent 70%);
+  opacity: 0.5;
+  filter: blur(1px);
+}
+.scene--wedding::before{ width: 140px; height: 140px; top: 8%; left: -8%; }
+.scene--wedding::after{ width: 110px; height: 110px; bottom: 10%; right: -6%; }
+@media (prefers-reduced-motion: no-preference){
+  .scene--wedding.is-active::before{ animation: glow-drift 6s ease-in-out infinite; }
+  .scene--wedding.is-active::after{ animation: glow-drift 7.5s ease-in-out infinite reverse; }
+}
+@keyframes glow-drift{
+  0%, 100%{ opacity: 0.35; transform: translateY(0) scale(1); }
+  50%{ opacity: 0.65; transform: translateY(-10px) scale(1.08); }
+}
+
+/* Scattered motifs — reuse the shared SVG defs, positioned loosely
+   behind the copy, at low opacity so they read as atmosphere. */
+.scatter{ position: absolute; inset: 0; overflow: hidden; z-index: 0; pointer-events: none; }
+.scatter-icon{ position: absolute; width: 30px; height: auto; opacity: 0.16; }
+.scene--manas .scatter-icon{ color: var(--maroon); width: 26px; opacity: 0.12; }
+.scene--manas .scatter-icon--1{ top: 10%; right: 10%; }
+.scene--mehndi .scatter-icon{ color: var(--mehndi-green); width: 34px; }
+.scene--mehndi .scatter-icon--1{ top: 9%; right: 8%; transform: rotate(18deg); }
+.scene--mehndi .scatter-icon--2{ bottom: 12%; left: 6%; transform: rotate(-25deg) scaleX(-1); }
+.scene--haldi .scatter-icon{ color: var(--haldi); width: 22px; opacity: 0.22; }
+.scene--haldi .scatter-icon--1{ top: 10%; left: 10%; transform: rotate(-12deg); }
+.scene--haldi .scatter-icon--2{ top: 18%; right: 12%; transform: rotate(20deg) scale(0.85); }
+.scene--haldi .scatter-icon--3{ bottom: 10%; left: 20%; transform: rotate(8deg) scale(0.7); }
+.scene--wedding .scatter-icon{ color: var(--gold); width: 16px; opacity: 0.5; }
+.scene--wedding .scatter-icon--1{ top: 14%; left: 12%; }
+.scene--wedding .scatter-icon--2{ bottom: 16%; right: 14%; transform: rotate(30deg); }
+
+/* ============================================================
+   PAGE 1 — LANGUAGE
+============================================================ */
+.scene--lang{
+  background:
+    radial-gradient(120% 70% at 50% 0%, rgba(221,187,128,0.35) 0%, transparent 58%),
+    radial-gradient(100% 60% at 50% 100%, rgba(107,30,42,0.12) 0%, transparent 60%),
+    var(--ivory);
+}
+.lang-flourish{ width: 56px; height: 56px; color: var(--gold); margin-bottom: 4px; opacity: 0.85; }
+.eyebrow-names{
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 6vw, 1.7rem);
+  font-style: italic;
+  letter-spacing: 0.02em;
+  color: var(--maroon);
+  margin: 0;
+}
+.eyebrow-names--lang{ font-size: clamp(2rem, 9vw, 2.7rem); font-weight: 600; margin-bottom: 2px; }
+.eyebrow-names .amp, .eyebrow-names--lang .amp{ color: var(--gold); font-size: 0.8em; }
+.lang-subtitle{
+  font-family: var(--font-heading);
+  font-size: 0.92rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0 0 42px;
+}
+.lang-subtitle__hi{ font-family: 'Noto Serif Devanagari', serif; font-size: 0.95rem; }
+.lang-choice{
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16px;
+  width: 100%;
+  max-width: 280px;
+}
+.lang-btn{
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  letter-spacing: 0.03em;
+  color: var(--ivory);
+  padding: 18px 26px;
+  background: var(--maroon);
+  border: 1.4px solid var(--maroon);
+  border-radius: 999px;
+  box-shadow: 0 8px 20px rgba(107,30,42,0.22);
+  transition: background .2s ease, transform .15s ease;
+  min-height: 56px;
+}
+.lang-btn:active{ background: var(--maroon-dark); transform: scale(0.97); }
+
+/* ============================================================
+   PAGE 2 — SEALED INVITATION
+============================================================ */
+.scene--seal{
+  background: linear-gradient(160deg, var(--maroon) 0%, var(--maroon-dark) 100%);
+  color: var(--ivory);
+}
+.scene__inner--seal{ perspective: 1300px; gap: 26px; }
+.invite-card{
+  position: relative;
+  width: min(74vw, 280px);
+  aspect-ratio: 3 / 4;
+  background: linear-gradient(165deg, #7C2836 0%, var(--maroon-dark) 100%);
+  border-radius: 16px;
+  box-shadow: 0 22px 46px rgba(0,0,0,0.35), 0 0 0 1px rgba(221,187,128,0.55) inset, 0 0 0 7px rgba(221,187,128,0.12);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  transform-style: preserve-3d;
+  transform-origin: top center;
+  transition: transform .95s var(--ease-invite), opacity .95s var(--ease-invite);
+  cursor: pointer;
+}
+.invite-card:active{ transform: scale(0.985); }
+.invite-card__corner{ position: absolute; width: 40px; height: 40px; color: var(--gold-soft); opacity: 0.7; }
+.invite-card__corner--tl{ top: 12px; left: 12px; }
+.invite-card__corner--br{ bottom: 12px; right: 12px; transform: rotate(180deg); }
+.invite-seal{
+  width: 92px; height: 92px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 32%, #EFD9A8 0%, var(--gold) 62%, #93692C 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.3), 0 0 0 4px rgba(251,243,231,0.15);
+  transition: transform .6s var(--ease-invite), opacity .6s var(--ease-invite);
+}
+.invite-seal__mono{
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--maroon-dark);
+  letter-spacing: 0.02em;
+}
+.invite-seal__heart{ color: var(--maroon); font-size: 0.7em; margin: 0 1px; }
+.invite-card__names{
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.1rem;
+  color: var(--gold-soft);
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0;
+}
+.invite-card__names .amp{ color: var(--ivory); opacity: 0.7; font-size: 0.85em; }
+.tap-hint--open{ color: var(--gold-soft); opacity: 0.9; flex-direction: column; }
+.tap-hint--open::after{ border-color: var(--gold-soft); transform: rotate(45deg); animation: chevron-bob-down 1.8s ease-in-out infinite; }
+@keyframes chevron-bob-down{
+  0%, 100%{ transform: rotate(45deg) translate(0,0); }
+  50%{ transform: rotate(45deg) translate(2px, 2px); }
+}
+/* Page 2's "tap to open" cue is unrelated to swipe navigation and must
+   never be affected by the has-swiped state. */
+html.has-swiped .tap-hint--open{ opacity: 0.9; animation: pulse-hint 2.4s ease-in-out infinite; }
+html.has-swiped .tap-hint--open::after{ animation: chevron-bob-down 1.8s ease-in-out infinite; }
+
+/* The opening interaction: card lifts open like a page turning, seal
+   breaks apart, then the whole card fades — all in one continuous
+   motion triggered by the single opening tap. */
+.invite-card.is-opening{
+  animation: card-open 0.95s var(--ease-invite) forwards;
+}
+.invite-card.is-opening .invite-seal{
+  animation: seal-break 0.55s var(--ease-invite) forwards;
+}
+.invite-card.is-opening .invite-card__names{ animation: rise-fade 0.4s ease-out forwards, fade-out 0.4s ease-in 0.4s forwards; }
+@keyframes card-open{
+  0%{ transform: rotateX(0deg) scale(1); opacity: 1; }
+  55%{ transform: rotateX(-22deg) scale(1.04); opacity: 1; }
+  100%{ transform: rotateX(-78deg) scale(0.88); opacity: 0; }
+}
+@keyframes seal-break{
+  0%{ transform: scale(1) rotate(0deg); opacity: 1; }
+  100%{ transform: scale(0.35) rotate(28deg); opacity: 0; }
+}
+@keyframes fade-out{ to{ opacity: 0; } }
+
+/* ============================================================
+   NAMES (shared across couple / wedding / final scenes)
+============================================================ */
+.names{
+  font-family: var(--font-display);
+  color: var(--maroon);
+  margin: 4px 0;
+  line-height: 1.12;
+}
+.names--stacked{
+  font-size: clamp(2.2rem, 10.5vw, 3.4rem);
+  font-weight: 700;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+.names--inline{
+  font-size: clamp(1.6rem, 7.5vw, 2.05rem);
+  font-weight: 700;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 2px;
+}
+.names--final{ font-size: clamp(1.9rem, 8.5vw, 2.7rem); margin-top: 0; }
+.names .amp, .amp{
+  font-style: italic;
+  color: var(--gold);
+  font-size: 0.72em;
+}
+.names--stacked .amp{ font-size: 1.05rem; margin: 2px 0; }
+
+.ganesha-line{
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+  color: var(--gold);
+  margin: 0 0 2px;
+}
+
+.blessing{
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(1.05rem, 4.6vw, 1.22rem);
+  color: var(--ink-soft);
+  white-space: pre-line;
+  max-width: 300px;
+  margin: 4px 0 8px;
+  line-height: 1.5;
+}
+html[data-lang="hi"] .blessing{ font-style: normal; font-size: clamp(1rem, 4.4vw, 1.12rem); letter-spacing: 0; }
+.blessing--eyebrow{ font-size: clamp(0.95rem, 4.2vw, 1.08rem); max-width: 260px; margin: 0 0 6px; }
+
+.with-love{
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--ink-soft);
+  margin: 0;
+}
+html[data-lang="hi"] .with-love{ font-style: normal; font-family: var(--font-body); }
+
+/* Couple parents — Page 3. Two short, quiet lines under the names. */
+.couple-parents{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+  max-width: 300px;
+}
+.couple-parents__row{ margin: 0; }
+.couple-parents__name{
+  font-family: var(--font-heading);
+  font-size: 0.98rem;
+  color: var(--maroon);
+  margin: 0 0 2px;
+}
+.couple-parents__rel{
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Final-scene contact line — plain static text, no form. */
+.contact-line{
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+.contact-line__label{
+  font-size: 0.7rem;
+  letter-spacing: 0.03em;
+  color: var(--ink-soft);
+  opacity: 0.7;
+  margin: 0 0 2px;
+}
+.contact-line__row{
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  opacity: 0.9;
+  margin: 0;
+  text-decoration: none;
+}
+.contact-line__row a{ color: inherit; text-decoration: none; }
+.contact-line__row a:active{ opacity: 0.6; }
+
+.tap-hint{
+  margin-top: 16px;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  opacity: 0.75;
+  display: inline-flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 5px;
+  animation: pulse-hint 2.4s ease-in-out infinite;
+  transition: opacity 0.6s ease;
+}
+.scene--lang .tap-hint{ display: none; }
+.tap-hint::after{
+  content: "";
+  width: 7px; height: 7px;
+  border-right: 1.3px solid currentColor;
+  border-bottom: 1.3px solid currentColor;
+  transform: rotate(-135deg);
+  animation: chevron-bob 1.8s ease-in-out infinite;
+}
+@keyframes chevron-bob{
+  0%, 100%{ transform: rotate(-135deg) translate(0,0); }
+  50%{ transform: rotate(-135deg) translate(-2px, -2px); }
+}
+@keyframes pulse-hint{
+  0%, 100%{ opacity: 0.4; }
+  50%{ opacity: 0.85; }
+}
+/* Once the visitor has demonstrated they know the gesture, the cues
+   fade to something barely-there for the rest of the session rather
+   than disappearing abruptly. */
+html.has-swiped .tap-hint{ opacity: 0.22; animation: none; }
+html.has-swiped .tap-hint::after{ animation: none; }
+
+/* ============================================================
+   PHOTOGRAPHS — integrated with soft arch/round frames rather
+   than plain rectangles.
+============================================================ */
+.photo-frame{
+  position: relative;
+  width: min(66vw, 250px);
+  aspect-ratio: 3 / 4;
+  margin: 0 auto;
+  isolation: isolate;
+}
+.photo-frame img{
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.photo-frame--arch,
+.photo-frame--arch img{
+  border-radius: 50% 50% 10px 10px / 32% 32% 10px 10px;
+}
+.photo-frame--arch{
+  box-shadow:
+    0 0 0 4px var(--ivory),
+    0 0 0 6px var(--gold-soft),
+    0 16px 32px rgba(62,17,25,0.22);
+}
+/* Bias the crop upward slightly so faces (which sit in the upper portion
+   of both supplied photographs) are never pushed toward the frame edge
+   when the taller source image is cropped to the frame's aspect ratio. */
+.photo-frame--faces-top img{ object-position: 50% 22%; }
+
+.photo-frame__corner{ position: absolute; width: 22px; height: 22px; color: var(--gold); z-index: 2; }
+.photo-frame__corner--tl{ top: 4px; left: 4px; }
+.photo-frame__corner--br{ bottom: 4px; right: 4px; transform: rotate(180deg); }
+
+.photo-frame--round{
+  width: 108px;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 4px var(--ivory),
+    0 0 0 6px var(--mehndi-green),
+    0 10px 22px rgba(62,17,25,0.2);
+  margin: 2px auto;
+}
+.photo-frame--round img{ border-radius: 50%; }
+
+.mandap-frame{
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.mandap-arch-art{
+  width: 46vw; max-width: 172px;
+  height: auto;
+  color: var(--gold);
+  position: relative;
+  z-index: 1;
+}
+.photo-frame--mandap{
+  width: min(52vw, 196px);
+  margin-top: -22px;
+  z-index: 0;
+}
+
+/* ============================================================
+   EVENT SCENES (manas / mehndi / haldi / wedding)
+============================================================ */
+.event-motif{ width: 58px; height: auto; color: var(--mehndi-green); margin-bottom: 8px; }
+.event-motif--marigold{ color: var(--haldi); width: 50px; }
+.event-motif--diya{ color: var(--maroon); width: 50px; }
+.event-motif--havan{ color: var(--maroon); width: min(58vw, 190px); margin-bottom: 6px; }
+
+/* Small illustrated scene inside a round frame (Mehndi / Haldi) — replaces
+   the plain photo used elsewhere, since these two pages carry an
+   illustration rather than a photograph. */
+.photo-frame--illustrated{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 42% 38%, var(--ivory) 0%, var(--ivory-deep) 100%);
+}
+.frame-illustration{ width: 62%; height: auto; color: var(--mehndi-green); }
+.photo-frame--haldi{
+  box-shadow:
+    0 0 0 4px var(--ivory),
+    0 0 0 6px var(--haldi),
+    0 10px 22px rgba(62,17,25,0.2);
+}
+.photo-frame--haldi .frame-illustration{ color: var(--ink-soft); }
+
+.barat-line{
+  font-size: 0.86rem;
+  font-style: italic;
+  color: var(--ink-soft);
+  max-width: 288px;
+  margin: 4px auto 0;
+  line-height: 1.6;
+}
+html[data-lang="hi"] .barat-line{ font-style: normal; }
+
+.event-title{
+  font-family: var(--font-heading);
+  font-size: clamp(1.5rem, 7vw, 1.75rem);
+  color: var(--maroon);
+  letter-spacing: 0.025em;
+  margin: 0 0 8px;
+}
+.event-title--vivah{ font-size: clamp(1.15rem, 5.2vw, 1.35rem); color: var(--gold); margin-top: -6px; letter-spacing: 0.08em; }
+
+.event-details{ margin: 6px 0 4px; }
+.event-date, .event-day, .event-time{
+  font-size: 1rem;
+  color: var(--ink);
+  margin: 2px 0;
+}
+.event-date:empty, .event-day:empty, .event-time:empty{ display: none; }
+.event-day{ color: var(--ink-soft); font-size: 0.92rem; }
+
+.event-venue{ margin-top: 12px; }
+.venue-name{
+  font-family: var(--font-heading);
+  font-size: 1.08rem;
+  color: var(--maroon);
+  margin: 0 0 5px;
+}
+.venue-name--vivah{
+  font-size: 0.98rem;
+  color: var(--gold);
+  letter-spacing: 0.04em;
+  margin: -2px 0 0;
+}
+.venue-address{
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  white-space: pre-line;
+  max-width: 270px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ============================================================
+   PAGE 8 — OUR LITTLE STARS
+============================================================ */
+.stars-art{ width: min(72vw, 260px); height: auto; margin-bottom: 2px; }
+.stars-names{
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  color: var(--maroon);
+  letter-spacing: 0.02em;
+  line-height: 1.9;
+  white-space: pre-line;
+  margin: 0;
+}
+.stars-message{
+  font-size: 0.92rem;
+  color: var(--ink-soft);
+  white-space: pre-line;
+  max-width: 280px;
+  margin: 2px 0 0;
+  line-height: 1.6;
+}
+
+/* ============================================================
+   ACTION BUTTONS (final page)
+============================================================ */
+.action-row{
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 280px;
+  margin-top: 10px;
+}
+.pill-btn{
+  font-family: var(--font-heading);
+  font-size: 0.98rem;
+  letter-spacing: 0.02em;
+  color: var(--maroon);
+  padding: 16px 20px;
+  border: 1.4px solid var(--maroon);
+  border-radius: 999px;
+  background: transparent;
+  transition: transform .15s ease, background .2s ease, color .2s ease;
+  min-height: 52px;
+}
+.pill-btn:active{ transform: scale(0.97); }
+.pill-btn--primary{
+  background: var(--maroon);
+  color: var(--ivory);
+  box-shadow: 0 6px 16px rgba(107,30,42,0.22);
+}
+.pill-btn--primary:active{ background: var(--maroon-dark); }
+
+/* ============================================================
+   BACK BUTTON — top-right, out of the way of the corner flourish
+============================================================ */
+.back-btn{
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 12px);
+  right: 12px;
+  left: auto;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--ink-soft);
+  opacity: 0.6;
+  padding: 12px;
+  min-width: 44px;
+  min-height: 44px;
+  transition: opacity .2s ease;
+}
+.back-btn:active{ opacity: 1; }
+.back-btn__label{ font-size: 0.78rem; letter-spacing: 0.02em; }
+
+/* ============================================================
+   MUSIC TOGGLE — bottom-left, mirrors the back button's subtlety.
+============================================================ */
+.music-toggle{
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 56px);
+  left: 12px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-soft);
+  opacity: 0.55;
+  padding: 12px;
+  min-width: 44px;
+  min-height: 44px;
+  transition: opacity .2s ease;
+}
+.music-toggle:active{ opacity: 1; }
+.music-toggle__icon{ font-size: 1rem; line-height: 1; }
+.music-toggle.is-muted{ opacity: 0.35; }
+.music-toggle.is-muted .music-toggle__icon{ text-decoration: line-through; }
+
+/* ============================================================
+   SCENE TRANSITION CHARACTER
+============================================================ */
+@media (prefers-reduced-motion: no-preference){
+  .scene__inner::before{
+    content: "";
+    position: absolute;
+    inset: -40px;
+    z-index: -1;
+    opacity: 0;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .scene--haldi.is-active .scene__inner::before{
+    background: radial-gradient(circle, rgba(217,155,43,0.35) 0%, transparent 70%);
+    animation: sweep-in 1s var(--ease-invite) both;
+  }
+  .scene--wedding.is-active .scene__inner::before{
+    background: radial-gradient(circle, rgba(184,134,63,0.4) 0%, transparent 70%);
+    animation: sweep-in 1.1s var(--ease-invite) both;
+  }
+  .scene--final.is-active .scene__inner::before{
+    background: radial-gradient(circle, rgba(241,214,195,0.55) 0%, transparent 70%);
+    animation: sweep-in 1.2s var(--ease-invite) both;
+  }
+}
+@keyframes sweep-in{
+  from{ opacity: 0.9; transform: scale(0.6); }
+  to{ opacity: 0; transform: scale(1.3); }
+}
+
+/* ============================================================
+   ENTRY ANIMATIONS (per-scene reveal, respects reduced motion)
+============================================================ */
+@media (prefers-reduced-motion: no-preference){
+  .scene--couple.is-active .photo-frame{ animation: rise-fade 0.9s var(--ease-invite) both; }
+  .scene--couple.is-active .blessing{ animation: rise-fade 0.9s 0.12s var(--ease-invite) both; }
+  .scene--couple.is-active .names{ animation: rise-fade 0.9s 0.24s var(--ease-invite) both; }
+  .scene--couple.is-active .tap-hint{ animation: rise-fade 0.9s 0.4s var(--ease-invite) both; }
+
+  .scene--event.is-active .event-motif{ animation: draw-in 0.9s var(--ease-invite) both; }
+  .scene--event.is-active .event-title{ animation: rise-fade 0.7s 0.1s var(--ease-invite) both; }
+  .scene--event.is-active .event-details{ animation: rise-fade 0.7s 0.2s var(--ease-invite) both; }
+  .scene--event.is-active .event-venue{ animation: rise-fade 0.7s 0.3s var(--ease-invite) both; }
+  .scene--wedding.is-active .mandap-frame{ animation: rise-fade 1s var(--ease-invite) both; }
+  .scene--wedding.is-active .names{ animation: rise-fade 0.8s 0.15s var(--ease-invite) both; }
+  .scene--wedding.is-active .event-title--vivah{ animation: rise-fade 0.8s 0.28s var(--ease-invite) both; }
+  .scene--wedding.is-active .venue-name--vivah{ animation: rise-fade 0.7s 0.36s var(--ease-invite) both; }
+
+  .scene--stars.is-active .stars-art{ animation: rise-fade 0.9s var(--ease-invite) both; }
+  .scene--stars.is-active .stars-names{ animation: rise-fade 0.8s 0.15s var(--ease-invite) both; }
+
+  .scene--final.is-active .opening-art{ animation: gentle-glow 2.6s ease-in-out infinite; }
+
+  .scene .scatter-icon{ animation: rise-fade 1.3s var(--ease-invite) both; }
+}
+@keyframes rise-fade{
+  from{ opacity: 0; transform: translateY(10px); }
+  to{ opacity: 1; transform: translateY(0); }
+}
+@keyframes draw-in{
+  from{ opacity: 0; transform: scale(0.8) rotate(-6deg); }
+  to{ opacity: 1; transform: scale(1) rotate(0deg); }
+}
+@keyframes gentle-glow{
+  0%, 100%{ filter: drop-shadow(0 0 0 rgba(184,134,63,0)); }
+  50%{ filter: drop-shadow(0 0 10px rgba(184,134,63,0.35)); }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .tap-hint{ animation: none; opacity: 0.75; }
+  .tap-hint::after{ animation: none; }
+  .invite-card.is-opening{ animation-duration: .2s; }
+}
+
+.opening-art{ width: auto; height: min(30vh, 248px); max-width: 88%; margin-bottom: 2px; }
+.opening-art--small{ height: min(15vh, 108px); }
+
+/* ============================================================
+   RESPONSIVE — small phones & larger phones
+   Verified against 320 / 360 / 375 / 390 / 414px viewports.
+============================================================ */
+@media (max-width: 400px){
+  .scene{ padding-left: 20px; padding-right: 20px; }
+  .action-row{ max-width: 100%; }
+  .photo-frame{ width: min(60vw, 220px); }
+  .photo-frame--mandap{ width: min(48vw, 176px); }
+  .mandap-arch-art{ width: 42vw; }
+  .opening-art--small{ height: min(13vh, 92px); }
+}
+@media (min-width: 430px){
+  .scene__inner{ max-width: 460px; }
+}
+
+/* Guard against any accidental horizontal overflow */
+img, svg{ max-width: 100%; }
+
+/* ============================================================
+   EVENT-SPECIFIC ENTRANCE EFFECTS
+   ------------------------------------------------------------
+   A short (~2.5s), self-cleaning shower of small decorative shapes,
+   played once when Mehndi/Haldi/Shubh Vivah becomes the active scene.
+   Each particle is a small positioned span (animated, GPU-friendly
+   transform) containing a static, pre-rotated <i> (the visible shape),
+   so rotation/scale never fights with the fall animation. A mix of
+   two or three shape variants per effect, plus a foreground/background
+   size-blur split (set inline by script.js), gives each shower some
+   depth instead of one repeated shape at one distance.
+============================================================ */
+.effect-layer{
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  overflow: hidden;
+  pointer-events: none;
+}
+.fx-particle{
+  position: absolute;
+  top: -10%;
+  animation-timing-function: ease-in;
+  animation-fill-mode: forwards;
+  will-change: transform, opacity;
+}
+.fx-particle i{ display: block; }
+
+/* ---------- Mehndi & Sangeet — botanical leaves & tiny petals ---------- */
+.fx-particle--leaf i{
+  width: 10px; height: 15px;
+  background: var(--mehndi-green);
+  border-radius: 0 100% 0 100%;
+}
+.fx-particle--leaf-small i{
+  width: 7px; height: 11px;
+  background: var(--mehndi-green);
+  border-radius: 100% 0 100% 0;
+  opacity: 0.9;
+}
+.fx-particle--petal-tiny i{
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--blush);
+}
+.fx-particle--petal-tiny:nth-child(4n) i{ background: var(--gold-soft); }
+
+/* ---------- Haldi — powder dust, fine grains & soft blobs ---------- */
+.fx-particle--dot i{
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--haldi-soft) 0%, var(--haldi) 75%);
+}
+.fx-particle--dot-fine i{
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--haldi-soft);
+}
+.fx-particle--blob i{
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 34%, rgba(246,223,160,0.9) 0%, rgba(217,155,43,0.45) 70%, rgba(217,155,43,0) 100%);
+}
+
+/* ---------- Shubh Vivah — petals, tiny rose buds & garland strands ---------- */
+.fx-particle--petal i{
+  width: 12px; height: 9px;
+  border-radius: 50% 0 50% 0;
+  background: var(--blush);
+}
+.fx-particle--petal:nth-child(3n) i{ background: var(--gold-soft); }
+.fx-particle--petal:nth-child(5n) i{ background: #C2445B; }
+.fx-particle--petal-small i{
+  width: 8px; height: 6px;
+  border-radius: 50% 0 50% 0;
+  background: var(--blush);
+}
+.fx-particle--petal-small:nth-child(4n) i{ background: #C2445B; }
+.fx-particle--rose i{
+  width: 13px; height: 13px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #E7A3B4 0%, #C2445B 65%, #8E2C40 100%);
+  box-shadow: 0 0 0 2px rgba(255,250,240,0.5);
+}
+.fx-particle--garland i{
+  width: 5px; height: 22px;
+  border-radius: 3px;
+  background: repeating-linear-gradient(
+    180deg,
+    var(--gold-soft) 0px, var(--gold-soft) 4px,
+    var(--blush) 4px, var(--blush) 8px
+  );
+}
+
+@media (prefers-reduced-motion: no-preference){
+  .fx-drift-1{ animation-name: fx-fall-1; }
+  .fx-drift-2{ animation-name: fx-fall-2; }
+  .fx-drift-3{ animation-name: fx-fall-3; }
+  .fx-drift-4{ animation-name: fx-fall-4; }
+}
+@media (prefers-reduced-motion: reduce){
+  .effect-layer{ display: none; }
+}
+@keyframes fx-fall-1{
+  0%{ transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  10%{ opacity: 1; }
+  50%{ transform: translate(12px, 55vh) rotate(30deg); }
+  88%{ opacity: 0.9; }
+  100%{ transform: translate(-16px, 118vh) rotate(55deg); opacity: 0; }
+}
+@keyframes fx-fall-2{
+  0%{ transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  10%{ opacity: 1; }
+  50%{ transform: translate(-18px, 52vh) rotate(-25deg); }
+  88%{ opacity: 0.9; }
+  100%{ transform: translate(14px, 118vh) rotate(-50deg); opacity: 0; }
+}
+@keyframes fx-fall-3{
+  0%{ transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  10%{ opacity: 1; }
+  50%{ transform: translate(7px, 58vh) rotate(15deg); }
+  88%{ opacity: 0.9; }
+  100%{ transform: translate(-9px, 118vh) rotate(35deg); opacity: 0; }
+}
+@keyframes fx-fall-4{
+  0%{ transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  10%{ opacity: 1; }
+  38%{ transform: translate(-10px, 32vh) rotate(-14deg); }
+  65%{ transform: translate(9px, 74vh) rotate(18deg); }
+  88%{ opacity: 0.9; }
+  100%{ transform: translate(-6px, 118vh) rotate(-30deg); opacity: 0; }
+}
